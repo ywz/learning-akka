@@ -6,6 +6,8 @@ import akka.actor.ActorSystem;
 import akka.pattern.CircuitBreaker;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
 import scala.concurrent.Future;
 import scala.concurrent.duration.FiniteDuration;
 
@@ -21,7 +23,9 @@ import static scala.compat.java8.FutureConverters.toJava;
 public class ApplicationMain {
 
     public static void main(String[] args) {
-        ActorSystem system = ActorSystem.create("MyActorSystem");
+
+        Config config = ConfigFactory.load("ch7_mailbox_application.conf");
+        ActorSystem system = ActorSystem.create("MyActorSystem", config);
         ActorRef pingActorWithMailbox = system.actorOf(PingActor.props().withMailbox("akka.actor.boundedmailbox"), "pingActor");
 
         pingActorWithMailbox.tell(new PingActor.Initialize(), null);
