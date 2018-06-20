@@ -20,7 +20,7 @@ import static scala.compat.java8.FutureConverters.toJava;
  * and circuitbreaker
  */
 
-public class ApplicationMain {
+public class PingPongMain {
 
     public static void main(String[] args) {
 
