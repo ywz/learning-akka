@@ -17,7 +17,7 @@ public class EventBusMain {
         // error topic
         lookupClassifier.publish(new EventBusMessage("time", String.valueOf(System.currentTimeMillis())));
 
-        //
+        // correct topic
         lookupClassifier.publish(new EventBusMessage("java-greetings", "java event bus greeting"));
     }
 }
