@@ -34,7 +34,7 @@ public class Main2551 {
         ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
         ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter",
                 Props.create(Counter.class), settings.withRole("sharding"), Counter.getMessageExtractor());
-        ClusterSharding.get(system).startProxy("Counter", java.util.Optional.of("sharding"),Counter.getMessageExtractor());
+        // ClusterSharding.get(system).startProxy("Counter", java.util.Optional.of("sharding"),Counter.getMessageExtractor());
 
         // router
         //		ActorRef workers = system.actorOf(new BalancingPool(5).props(Props.create(ArticleParseActor.class)), "workers");

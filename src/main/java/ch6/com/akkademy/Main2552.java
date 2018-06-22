@@ -32,13 +32,13 @@ public class Main2552 {
         sender.tell("hello", null);
 
         System.out.println("###");
-        // system.actorSelection("akka://Akkademy/user/printer").tell("bbb", ActorRef.noSender());
+        system.actorSelection("akka.tcp://Akkademy@127.0.0.1:2551/user/printer").tell("bbb", ActorRef.noSender());
 
         // sharding
         ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
         ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter",
                 Props.create(Counter.class), settings, Counter.getMessageExtractor());
-        ClusterSharding.get(system).startProxy("Counter", java.util.Optional.of("sharding"), Counter.getMessageExtractor());
+        // ClusterSharding.get(system).startProxy("Counter", java.util.Optional.of("sharding"), Counter.getMessageExtractor());
         startedCounterRegion.tell(new Counter.Get(123), ActorRef.noSender());
 
 
