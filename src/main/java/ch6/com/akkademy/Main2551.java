@@ -25,15 +25,21 @@ public class Main2551 {
 
         // distributed publish srbscribe in cluster
         system.actorOf(Props.create(Subscriber.class), "subscriber1");
-//        ActorRef publisher = system.actorOf(Props.create(Publisher.class), "publisher");
-//        publisher.tell("hello", null);
+        //        ActorRef publisher = system.actorOf(Props.create(Publisher.class), "publisher");
+        //        publisher.tell("hello", null);
         system.actorOf(Props.create(Destination.class), "destination");
 
         // sharding
         Option<String> roleOption = Option.none();
         ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
-        ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter",
-                Props.create(Counter.class), settings.withRole("sharding"), Counter.getMessageExtractor());
+        ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter", Props.create(Counter.class), settings.withRole("sharding"), Counter.getMessageExtractor());
+
+        ActorRef counterRegion = ClusterSharding.get(system).shardRegion("Counter");
+        counterRegion.tell(new Counter.Get(123), ActorRef.noSender());
+        counterRegion.tell(new Counter.EntityEnvelope(123,
+                Counter.CounterOp.INCREMENT), ActorRef.noSender());
+        counterRegion.tell(new Counter.Get(123), ActorRef.noSender());
+
         // ClusterSharding.get(system).startProxy("Counter", java.util.Optional.of("sharding"),Counter.getMessageExtractor());
 
         // router

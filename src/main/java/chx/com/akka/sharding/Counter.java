@@ -24,7 +24,7 @@ public class Counter extends AbstractPersistentActor {
         }
     }
 
-    public static class EntityEnvelope {
+    public static class EntityEnvelope implements Serializable {
         final public long id;
         final public Object payload;
 
@@ -34,7 +34,7 @@ public class Counter extends AbstractPersistentActor {
         }
     }
 
-    public static class CounterChanged {
+    public static class CounterChanged implements Serializable {
         final public int delta;
 
         public CounterChanged(int delta) {
@@ -59,6 +59,7 @@ public class Counter extends AbstractPersistentActor {
 
     void updateState(CounterChanged event) {
         count += event.delta;
+        System.out.println("new count: " + count);
     }
 
     @Override

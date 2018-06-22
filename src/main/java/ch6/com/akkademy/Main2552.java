@@ -12,6 +12,7 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 public class Main2552 {
     public static void main(String... args) {
@@ -32,19 +33,27 @@ public class Main2552 {
         sender.tell("hello", null);
 
         System.out.println("###");
-        system.actorSelection("akka.tcp://Akkademy@127.0.0.1:2551/user/printer").tell("bbb", ActorRef.noSender());
+        //  system.actorSelection("akka.tcp://Akkademy@127.0.0.1:2551/user/printer").tell("bbb", ActorRef.noSender());
 
         // sharding
         ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
-        ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter",
-                Props.create(Counter.class), settings, Counter.getMessageExtractor());
+        ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter", Props.create(Counter.class), settings, Counter.getMessageExtractor());
+
         // ClusterSharding.get(system).startProxy("Counter", java.util.Optional.of("sharding"), Counter.getMessageExtractor());
-        startedCounterRegion.tell(new Counter.Get(123), ActorRef.noSender());
+        // startedCounterRegion.tell(new Counter.Get(123), ActorRef.noSender());
 
-
-        // ActorRef counterRegion = ClusterSharding.get(system).shardRegion("Counter");
-        // counterRegion.tell(new Counter.Get(123), ActorRef.noSender());
-
+        ActorRef counterRegion = ClusterSharding.get(system).shardRegion("Counter");
+        IntStream.range(0, 1000).forEach(x -> {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            counterRegion.tell(new Counter.Get(123), ActorRef.noSender());
+            counterRegion.tell(new Counter.EntityEnvelope(123,
+                    Counter.CounterOp.INCREMENT), ActorRef.noSender());
+            counterRegion.tell(new Counter.Get(123), ActorRef.noSender());
+        });
 
 //        ActorRef printer = system.actorOf(FromConfig.getInstance().props(), "printer");
 //        printer.tell("blah ", ActorRef.noSender());
