@@ -29,30 +29,29 @@ public class Main2552 {
         }
         system.actorOf(Props.create(Destination.class), "destination");
 
+        // distributed publish subscribe in cluster
         ActorRef sender = system.actorOf(Props.create(Publisher.class), "sender");
         sender.tell("hello", null);
 
-        System.out.println("###");
-        //  system.actorSelection("akka.tcp://Akkademy@127.0.0.1:2551/user/printer").tell("bbb", ActorRef.noSender());
+        System.out.println("### after 10s ###");
+
+        // remote
+        system.actorSelection("akka.tcp://Akkademy@127.0.0.1:2551/user/printer").tell("bbb", ActorRef.noSender());
 
         // sharding
         ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
         ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter", Props.create(Counter.class), settings, Counter.getMessageExtractor());
-
-        // ClusterSharding.get(system).startProxy("Counter", java.util.Optional.of("sharding"), Counter.getMessageExtractor());
-        // startedCounterRegion.tell(new Counter.Get(123), ActorRef.noSender());
-
         ActorRef counterRegion = ClusterSharding.get(system).shardRegion("Counter");
-        IntStream.range(0, 1000).forEach(x -> {
+        IntStream.range(0, 10).forEach(x -> {
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            counterRegion.tell(new Counter.Get(123), ActorRef.noSender());
-            counterRegion.tell(new Counter.EntityEnvelope(123,
+            counterRegion.tell(new Counter.Get(x), ActorRef.noSender());
+            counterRegion.tell(new Counter.EntityEnvelope(x,
                     Counter.CounterOp.INCREMENT), ActorRef.noSender());
-            counterRegion.tell(new Counter.Get(123), ActorRef.noSender());
+            counterRegion.tell(new Counter.Get(x), ActorRef.noSender());
         });
 
 //        ActorRef printer = system.actorOf(FromConfig.getInstance().props(), "printer");

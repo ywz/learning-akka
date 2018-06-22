@@ -59,7 +59,7 @@ public class Counter extends AbstractPersistentActor {
 
     void updateState(CounterChanged event) {
         count += event.delta;
-        System.out.println("new count: " + count);
+        System.out.println(context().self().path() + " new count: " + count);
     }
 
     @Override
@@ -101,12 +101,17 @@ public class Counter extends AbstractPersistentActor {
 
             @Override
             public String entityId(Object message) {
-                if (message instanceof Counter.EntityEnvelope)
-                    return String.valueOf(((Counter.EntityEnvelope) message).id);
-                else if (message instanceof Counter.Get)
-                    return String.valueOf(((Counter.Get) message).counterId);
-                else
+                if (message instanceof Counter.EntityEnvelope) {
+                    String entityId = String.valueOf(((Counter.EntityEnvelope) message).id);
+                    // System.out.println("entityId: " + entityId);
+                    return entityId;
+                } else if (message instanceof Counter.Get) {
+                    String entityId = String.valueOf(((Counter.Get) message).counterId);
+                    // System.out.println("entityId: " + entityId);
+                    return entityId;
+                } else {
                     return null;
+                }
             }
 
             @Override
@@ -122,9 +127,11 @@ public class Counter extends AbstractPersistentActor {
                 int numberOfShards = 100;
                 if (message instanceof Counter.EntityEnvelope) {
                     long id = ((Counter.EntityEnvelope) message).id;
+                    // System.out.println("shardId: " + id);
                     return String.valueOf(id % numberOfShards);
                 } else if (message instanceof Counter.Get) {
                     long id = ((Counter.Get) message).counterId;
+                    // System.out.println("shardId: " + id);
                     return String.valueOf(id % numberOfShards);
                 } else {
                     return null;

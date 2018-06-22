@@ -23,7 +23,7 @@ public class Main2551 {
         ActorRef printer = system.actorOf(Props.create(PrintActor.class), "printer");
         ClusterClientReceptionist.get(system).registerService(printer);
 
-        // distributed publish srbscribe in cluster
+        // distributed publish subscribe in cluster
         system.actorOf(Props.create(Subscriber.class), "subscriber1");
         //        ActorRef publisher = system.actorOf(Props.create(Publisher.class), "publisher");
         //        publisher.tell("hello", null);
