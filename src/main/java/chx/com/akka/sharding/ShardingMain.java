@@ -13,6 +13,10 @@ import java.util.concurrent.TimeUnit;
 
 public class ShardingMain {
 
+    private static final String TYPE_NAME = "printers";
+
+    private static final String PRINTER_ID_PREFIX = "printer-";
+
     public static void main(String[] args) {
         Config config = ConfigFactory.load("chx_sharding_application.conf");
         ActorSystem system = ActorSystem.create("ShadingCluster", config);
@@ -20,13 +24,13 @@ public class ShardingMain {
         system.actorOf(Props.create(ClusterController.class), "clusterController");
 
         ClusterShardingSettings settings = ClusterShardingSettings.create(system);
-        ClusterSharding.get(system).start("printers", Props.create(Printer.class), settings, Printer.getMessageExtractor());
+        ClusterSharding.get(system).start(TYPE_NAME, Props.create(Printer.class), settings, Printer.getMessageExtractor());
 
-        ActorRef shardRegion = ClusterSharding.get(system).shardRegion("printers");
+        ActorRef shardRegion = ClusterSharding.get(system).shardRegion(TYPE_NAME);
         for (int i = 0; i < 10; i++) {
-            shardRegion.tell(new Printer.Init("printer-" + i), ActorRef.noSender());
-            shardRegion.tell(new Printer.Message("printer-" + i, "blah " + i), ActorRef.noSender());
-            shardRegion.tell(new Printer.Message("printer-" + i, "blah " + i), ActorRef.noSender());
+            shardRegion.tell(new Printer.Init(PRINTER_ID_PREFIX + i), ActorRef.noSender());
+            shardRegion.tell(new Printer.Message(PRINTER_ID_PREFIX + i, "hello " + i), ActorRef.noSender());
+            shardRegion.tell(new Printer.Message(PRINTER_ID_PREFIX + i, "blah " + i), ActorRef.noSender());
         }
 
         try {
@@ -34,7 +38,7 @@ public class ShardingMain {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        shardRegion.tell(new Printer.Message("printer-" + 3, "blah " + 3), ActorRef.noSender());
+        shardRegion.tell(new Printer.Message(PRINTER_ID_PREFIX + 3, "hello again " + 3), ActorRef.noSender());
         system.actorSelection("akka://ShadingCluster/system/sharding/printers/printer/printer-3").tell("selection", ActorRef.noSender());
     }
 }
