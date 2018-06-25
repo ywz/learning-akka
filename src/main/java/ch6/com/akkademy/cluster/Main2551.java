@@ -1,4 +1,4 @@
-package ch6.com.akkademy;
+package ch6.com.akkademy.cluster;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;

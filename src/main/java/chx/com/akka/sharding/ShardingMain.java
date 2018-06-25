@@ -5,7 +5,7 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import akka.cluster.sharding.ClusterSharding;
 import akka.cluster.sharding.ClusterShardingSettings;
-import ch6.com.akkademy.ClusterController;
+import ch6.com.akkademy.cluster.ClusterController;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 

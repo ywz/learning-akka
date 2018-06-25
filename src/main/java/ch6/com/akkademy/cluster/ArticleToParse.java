@@ -1,4 +1,4 @@
-package ch6.com.akkademy;
+package ch6.com.akkademy.cluster;
 
 public class ArticleToParse {
     static String article = "\n" +

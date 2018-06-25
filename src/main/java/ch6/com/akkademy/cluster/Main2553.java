@@ -1,4 +1,4 @@
-package ch6.com.akkademy;
+package ch6.com.akkademy.cluster;
 
 import akka.actor.ActorSystem;
 import com.typesafe.config.Config;

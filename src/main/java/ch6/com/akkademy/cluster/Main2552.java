@@ -1,4 +1,4 @@
-package ch6.com.akkademy;
+package ch6.com.akkademy.cluster;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
@@ -12,7 +12,6 @@ import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 public class Main2552 {
     public static void main(String... args) {
@@ -37,12 +36,11 @@ public class Main2552 {
 
         // remote
         system.actorSelection("akka.tcp://Akkademy@127.0.0.1:2551/user/printer").tell("bbb", ActorRef.noSender());
-
         // sharding
         ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
         ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter", Props.create(Counter.class), settings, Counter.getMessageExtractor());
         ActorRef counterRegion = ClusterSharding.get(system).shardRegion("Counter");
-        IntStream.range(0, 10).forEach(x -> {
+        for (int x = 0; x < 10; x++) {
             try {
                 TimeUnit.SECONDS.sleep(1);
             } catch (InterruptedException e) {
@@ -52,7 +50,7 @@ public class Main2552 {
             counterRegion.tell(new Counter.EntityEnvelope(x,
                     Counter.CounterOp.INCREMENT), ActorRef.noSender());
             counterRegion.tell(new Counter.Get(x), ActorRef.noSender());
-        });
+        }
 
 //        ActorRef printer = system.actorOf(FromConfig.getInstance().props(), "printer");
 //        printer.tell("blah ", ActorRef.noSender());
