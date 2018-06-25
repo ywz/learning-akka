@@ -24,7 +24,7 @@ public class ShardingMain {
 
         ActorRef shardRegion = ClusterSharding.get(system).shardRegion("printers");
         for (int i = 0; i < 10; i++) {
-            shardRegion.tell(new Printer.Get("printer" + i), ActorRef.noSender());
+            shardRegion.tell(new Printer.Init("printer-" + i), ActorRef.noSender());
             shardRegion.tell(new Printer.Message("printer-" + i, "blah " + i), ActorRef.noSender());
             shardRegion.tell(new Printer.Message("printer-" + i, "blah " + i), ActorRef.noSender());
         }

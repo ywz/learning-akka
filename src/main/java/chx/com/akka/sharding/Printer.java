@@ -9,14 +9,14 @@ import java.util.List;
 
 public class Printer extends AbstractActor {
 
-    static final String SHARD_ID = "printer";
+    private static final String SHARD_ID = "printer";
 
     private List<String> msgList = new ArrayList<>();
 
-    public static class Get implements Serializable {
+    public static class Init implements Serializable {
         public final String printerId;
 
-        public Get(String printerId) {
+        public Init(String printerId) {
             this.printerId = printerId;
         }
     }
@@ -46,10 +46,10 @@ public class Printer extends AbstractActor {
 
             @Override
             public String entityId(Object message) {
-                if (message instanceof Printer.Get)
-                    return ((Printer.Get) message).printerId;
+                if (message instanceof Printer.Init)
+                    return ((Printer.Init) message).printerId;
                 else if (message instanceof Printer.Message)
-                    return ((Message) message).printerId;
+                    return ((Printer.Message) message).printerId;
                 else
                     return null;
             }
