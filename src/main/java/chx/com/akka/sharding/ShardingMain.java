@@ -40,5 +40,6 @@ public class ShardingMain {
         }
         shardRegion.tell(new Printer.Message(PRINTER_ID_PREFIX + 3, "hello again " + 3), ActorRef.noSender());
         system.actorSelection("akka://ShadingCluster/system/sharding/printers/printer/printer-3").tell("selection", ActorRef.noSender());
+        system.actorSelection("akka://ShadingCluster/system/sharding/printers/printer/*").tell("boardcast", ActorRef.noSender());
     }
 }

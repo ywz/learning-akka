@@ -36,6 +36,7 @@ public class Main2552 {
 
         // remote
         system.actorSelection("akka.tcp://Akkademy@127.0.0.1:2551/user/printer").tell("bbb", ActorRef.noSender());
+
         // sharding
         ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
         ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter", Props.create(Counter.class), settings, Counter.getMessageExtractor());
