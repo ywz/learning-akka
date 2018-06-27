@@ -19,7 +19,7 @@ public class ShardingMain {
 
     public static void main(String[] args) {
         Config config = ConfigFactory.load("chx_sharding_application.conf");
-        ActorSystem system = ActorSystem.create("ShadingCluster", config);
+        ActorSystem system = ActorSystem.create("ShardingCluster", config);
 
         system.actorOf(Props.create(ClusterController.class), "clusterController");
 
