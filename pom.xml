@@ -77,11 +77,6 @@
             <version>0.4.1</version>
         </dependency>
         <dependency>
-            <groupId>com.jason-goodwin</groupId>
-            <artifactId>better-monads</artifactId>
-            <version>0.4.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.fusesource.leveldbjni</groupId>
             <artifactId>leveldbjni-all</artifactId>
             <version>1.8</version>

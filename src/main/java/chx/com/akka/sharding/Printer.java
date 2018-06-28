@@ -1,6 +1,7 @@
 package chx.com.akka.sharding;
 
 import akka.actor.AbstractActor;
+import akka.actor.Props;
 import akka.cluster.sharding.ShardRegion;
 
 import java.io.Serializable;
@@ -11,7 +12,17 @@ public class Printer extends AbstractActor {
 
     private static final String SHARD_ID = "printer";
 
+    private final String shardId;
+
     private List<String> msgList = new ArrayList<>();
+
+    static Props props(String ShardId) {
+        return Props.create(Printer.class, () -> new Printer(ShardId));
+    }
+
+    public Printer(String shardId) {
+        this.shardId = shardId;
+    }
 
     public static class Init implements Serializable {
         public final String printerId;
@@ -36,6 +47,7 @@ public class Printer extends AbstractActor {
         return receiveBuilder()
                 .match(String.class, x -> {
                     this.msgList.add(x);
+                    System.out.println("param: " + shardId);
                     System.out.println(getSelf().path() + ", new msg: " + x + ", list size: " + this.msgList.size());
                 })
                 .build();

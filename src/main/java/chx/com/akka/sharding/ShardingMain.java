@@ -24,7 +24,7 @@ public class ShardingMain {
         system.actorOf(Props.create(ClusterController.class), "clusterController");
 
         ClusterShardingSettings settings = ClusterShardingSettings.create(system);
-        ClusterSharding.get(system).start(TYPE_NAME, Props.create(Printer.class), settings, Printer.getMessageExtractor());
+        ClusterSharding.get(system).start(TYPE_NAME, Props.create(Printer.class, "param"), settings, Printer.getMessageExtractor());
 
         ActorRef shardRegion = ClusterSharding.get(system).shardRegion(TYPE_NAME);
         for (int i = 0; i < 10; i++) {
@@ -39,7 +39,7 @@ public class ShardingMain {
             e.printStackTrace();
         }
         shardRegion.tell(new Printer.Message(PRINTER_ID_PREFIX + 3, "hello again " + 3), ActorRef.noSender());
-        system.actorSelection("akka://ShadingCluster/system/sharding/printers/printer/printer-3").tell("selection", ActorRef.noSender());
-        system.actorSelection("akka://ShadingCluster/system/sharding/printers/printer/*").tell("boardcast", ActorRef.noSender());
+        system.actorSelection("akka://ShardingCluster/system/sharding/printers/printer/printer-3").tell("selection", ActorRef.noSender());
+        system.actorSelection("akka://ShardingCluster/system/sharding/printers/printer/*").tell("boardcast", ActorRef.noSender());
     }
 }
