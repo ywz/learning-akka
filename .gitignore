@@ -24,3 +24,8 @@ hs_err_pid*
 
 target/
 *.iml
+.DS_Store
+.svn
+.settings
+.project
+.classpath
