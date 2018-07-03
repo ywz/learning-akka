@@ -3,6 +3,8 @@ package chx.com.akka.sharding;
 import akka.actor.AbstractActor;
 import akka.actor.Props;
 import akka.cluster.sharding.ShardRegion;
+import akka.event.Logging;
+import akka.event.LoggingAdapter;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,6 +17,8 @@ public class Printer extends AbstractActor {
     private final String shardId;
 
     private List<String> msgList = new ArrayList<>();
+
+    private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
     static Props props(String ShardId) {
         return Props.create(Printer.class, () -> new Printer(ShardId));
@@ -47,8 +51,9 @@ public class Printer extends AbstractActor {
         return receiveBuilder()
                 .match(String.class, x -> {
                     this.msgList.add(x);
-                    System.out.println("param: " + shardId);
-                    System.out.println(getSelf().path() + ", new msg: " + x + ", list size: " + this.msgList.size());
+                    // System.out.println("param: " + shardId);
+                    //System.out.println(getSelf().path() + ", new msg: " + x + ", list size: " + this.msgList.size());
+                    log.debug("path: {}, new msg: {}, list size: {}", getSelf().path(), x, this.msgList.size());
                 })
                 .build();
     }
