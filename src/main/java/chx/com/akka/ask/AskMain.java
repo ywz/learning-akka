@@ -21,8 +21,10 @@ public class AskMain {
         System.out.println((String) future1.join());
 
         CompletableFuture<Object> future2 = ask(actorB, "hi", t).handle((result, ex) -> {
-            if (null != ex)
+            if (null != ex) {
                 System.out.println("error: " + ex.getMessage());
+                return null;
+            }
             return result;
         }).toCompletableFuture();
         System.out.println(future2.join());

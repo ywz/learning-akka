@@ -5,6 +5,8 @@ import akka.actor.Props;
 import akka.cluster.sharding.ShardRegion;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,11 +22,14 @@ public class Printer extends AbstractActor {
 
     private final LoggingAdapter log = Logging.getLogger(getContext().system(), this);
 
-    static Props props(String ShardId) {
-        return Props.create(Printer.class, () -> new Printer(ShardId));
+    private static Logger logger = LoggerFactory.getLogger(Printer.class);
+
+    static Props props(String shardId) {
+        return Props.create(Printer.class, () -> new Printer(shardId));
     }
 
     public Printer(String shardId) {
+        logger.debug("a new Printer, shard id: {}", shardId);
         this.shardId = shardId;
     }
 
