@@ -40,7 +40,9 @@ public class Main2552 {
         // sharding
         ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
         ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter", Props.create(Counter.class), settings, Counter.getMessageExtractor());
+
         ActorRef counterRegion = ClusterSharding.get(system).shardRegion("Counter");
+
         for (int x = 0; x < 10; x++) {
             try {
                 TimeUnit.SECONDS.sleep(1);
