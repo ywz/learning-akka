@@ -31,7 +31,8 @@ public class Main2551 {
 
         // sharding
         Option<String> roleOption = Option.none();
-        ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
+//        ClusterShardingSettings settings = ClusterShardingSettings.create(system).withRole("sharding");
+        ClusterShardingSettings settings = ClusterShardingSettings.create(system);
         ActorRef startedCounterRegion = ClusterSharding.get(system).start("Counter", Props.create(Counter.class), settings.withRole("sharding"), Counter.getMessageExtractor());
 
         ActorRef counterRegion = ClusterSharding.get(system).shardRegion("Counter");
