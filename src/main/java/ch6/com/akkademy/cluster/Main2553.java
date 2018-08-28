@@ -15,15 +15,24 @@ public class Main2553 {
     public static void main(String[] args) {
         Config config = ConfigFactory.load("ch6_demaid_application_2553.conf");
         ActorSystem system = ActorSystem.create("Akkademy", config);
-        ActorRef startedCounterRegion = ClusterSharding.get(system).startProxy("Counter", Optional.empty(), Counter.getMessageExtractor());
-
-        ActorRef printer = system.actorOf(Props.create(PrintActor.class), "printer");
-        ClusterClientReceptionist.get(system).registerService(printer);
-
+        ClusterSharding.get(system).startProxy("Counter", Optional.empty(), Counter.getMessageExtractor());
         ActorRef counterRegion = ClusterSharding.get(system).shardRegion("Counter");
         for (int i = 0; i < 10; i++) {
             counterRegion.tell(new Counter.EntityEnvelope(123,
                     Counter.CounterOp.INCREMENT), ActorRef.noSender());
         }
+
+        ActorRef printer = system.actorOf(Props.create(PrintActor.class), "printer");
+        ClusterClientReceptionist.get(system).registerService(printer);
+
+        // printer sharding
+//        ClusterShardingSettings settings = ClusterShardingSettings.create(system);
+//        ClusterSharding.get(system).start("printer", Props.create(Printer.class, "printer3"), settings.withRole("printer"), Printer.getMessageExtractor());
+//        ActorRef printerRegion = ClusterSharding.get(system).shardRegion("printer");
+//        printerRegion.tell(new Printer.Message("111", "2553"), ActorRef.noSender());
+//        printerRegion.tell(new Printer.Message("222", "2553"), ActorRef.noSender());
+//        printerRegion.tell(new Printer.Message("333", "2553"), ActorRef.noSender());
+//        printerRegion.tell(new Printer.Message("444", "2553"), ActorRef.noSender());
+//        printerRegion.tell(new Printer.Message("555", "2553"), ActorRef.noSender());
     }
 }

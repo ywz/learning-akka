@@ -8,6 +8,7 @@ import akka.cluster.sharding.ClusterSharding;
 import akka.cluster.sharding.ClusterShardingSettings;
 import ch5.com.akkademy.ArticleParseActor;
 import chx.com.akka.sharding.Counter;
+import chx.com.akka.sharding.Printer;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
 
@@ -55,6 +56,15 @@ public class Main2552 {
                     Counter.CounterOp.INCREMENT), ActorRef.noSender());
             counterRegion.tell(new Counter.Get(x), ActorRef.noSender());
         }
+
+        // printer sharding
+        ActorRef startedPrinterRegion = ClusterSharding.get(system).start("printer", Props.create(Printer.class, "printer2"), settings.withRole("printer"), Printer.getMessageExtractor());
+        ActorRef printerRegion = ClusterSharding.get(system).shardRegion("printer");
+        printerRegion.tell(new Printer.Message("111", "2552"), ActorRef.noSender());
+        printerRegion.tell(new Printer.Message("222", "2552"), ActorRef.noSender());
+        printerRegion.tell(new Printer.Message("333", "2552"), ActorRef.noSender());
+        printerRegion.tell(new Printer.Message("444", "2552"), ActorRef.noSender());
+        printerRegion.tell(new Printer.Message("555", "2552"), ActorRef.noSender());
 
 //        ActorRef printer = system.actorOf(FromConfig.getInstance().props(), "printer");
 //        printer.tell("blah ", ActorRef.noSender());

@@ -59,7 +59,7 @@ public class Counter extends AbstractPersistentActor {
 
     void updateState(CounterChanged event) {
         count += event.delta;
-        System.out.println(context().self().path() + " new count: " + count);
+        System.out.println(context().self().path() + ", new count: " + count);
     }
 
     @Override

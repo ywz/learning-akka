@@ -1,7 +1,9 @@
 package chx.com.akka.sharding;
 
 import akka.actor.AbstractActor;
+import akka.actor.ActorRef;
 import akka.actor.Props;
+import akka.cluster.sharding.ClusterSharding;
 import akka.cluster.sharding.ShardRegion;
 import akka.event.Logging;
 import akka.event.LoggingAdapter;
@@ -11,12 +13,11 @@ import org.slf4j.LoggerFactory;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Printer extends AbstractActor {
 
-    private static final String SHARD_ID = "printer";
-
-    private final String shardId;
+    private static String shardId;
 
     private List<String> msgList = new ArrayList<>();
 
@@ -24,22 +25,27 @@ public class Printer extends AbstractActor {
 
     private static Logger logger = LoggerFactory.getLogger(Printer.class);
 
+    private final ActorRef counterRegion;
+
     static Props props(String shardId) {
         return Props.create(Printer.class, () -> new Printer(shardId));
     }
 
     public Printer(String shardId) {
+        ClusterSharding.get(context().system()).startProxy("Counter", Optional.empty(), Counter.getMessageExtractor());
+        counterRegion = ClusterSharding.get(context().system()).shardRegion("Counter");
         logger.debug("a new Printer, shard id: {}", shardId);
         this.shardId = shardId;
     }
 
-    public static class Init implements Serializable {
-        public final String printerId;
-
-        public Init(String printerId) {
-            this.printerId = printerId;
-        }
-    }
+//    public static class Init implements Serializable {
+//        public final String printerId;
+//
+//        public Init(String printerId) {
+//            this.printerId = printerId;
+//            System.out.println("printer init: " + this.printerId);
+//        }
+//    }
 
     public static class Message implements Serializable {
         public final String printerId;
@@ -56,8 +62,8 @@ public class Printer extends AbstractActor {
         return receiveBuilder()
                 .match(String.class, x -> {
                     this.msgList.add(x);
-                    // System.out.println("param: " + shardId);
-                    //System.out.println(getSelf().path() + ", new msg: " + x + ", list size: " + this.msgList.size());
+                    System.out.println(getSelf().path() + ", new msg: " + x + ", list size: " + this.msgList.size());
+                    counterRegion.tell(new Counter.EntityEnvelope(999, Counter.CounterOp.INCREMENT), ActorRef.noSender());
                     log.debug("path: {}, new msg: {}, list size: {}", getSelf().path(), x, this.msgList.size());
                 })
                 .build();
@@ -68,9 +74,10 @@ public class Printer extends AbstractActor {
 
             @Override
             public String entityId(Object message) {
-                if (message instanceof Printer.Init)
-                    return ((Printer.Init) message).printerId;
-                else if (message instanceof Printer.Message)
+//                if (message instanceof Printer.Init)
+//                    return ((Printer.Init) message).printerId;
+//                else
+                if (message instanceof Printer.Message)
                     return ((Printer.Message) message).printerId;
                 else
                     return null;
@@ -86,7 +93,9 @@ public class Printer extends AbstractActor {
 
             @Override
             public String shardId(Object message) {
-                return Printer.SHARD_ID;
+                String printId = ((Printer.Message) message).printerId;
+                String shardId = String.valueOf(Integer.valueOf(printId) % 2);
+                return shardId;
             }
         };
     }
